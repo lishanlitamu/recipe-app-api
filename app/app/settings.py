@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
+    'core', #core is an application in app, settings.py describes the settings for app => therefore install core
 ]
 
 MIDDLEWARE = [
