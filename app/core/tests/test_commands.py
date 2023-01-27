@@ -22,7 +22,7 @@ class CommandTests(SimpleTestCase):
         call_command('wait_for_db')
         
 
-        patched_check.assert_called_once_with(database=['default'])
+        patched_check.assert_called_once_with(databases=['default'])
     
     @patch('time.sleep') # points to patched_sleep
     #time.sleep returns none value whenever calling it, it's used to override the sleep so it won't actually sleep like it should while waiting for db getting ready
@@ -39,7 +39,7 @@ class CommandTests(SimpleTestCase):
         call_command('wait_for_db')
 
         self.assertEqual(patched_check.call_count, 6)
-        patched_check.assert_called_with(database=['default'])
+        patched_check.assert_called_with(databases=['default'])
 
 
 
