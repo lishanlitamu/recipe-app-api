@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core', #core is an application in app, settings.py describes the settings for app => therefore install core
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_spectacular',
+    'user',
+    'recipe', # enable the recipe app
 ]
 
 MIDDLEWARE = [
