@@ -56,6 +56,42 @@ class Recipe(models.Model):
     time_minutes = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
+    # add tags
+    tags = models.ManyToManyField('Tag')
 
     def __str__(self):
         return self.title
+
+# Create Tag API, Step 2: Create a tag object in core.models
+class Tag(models.Model):
+    """Tag for filtering recipes."""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        # if user is deleleted, tags will be deleted.
+    )
+
+    def __str__(self):
+        return self.name
+
+# Create Tag API, Step 3: Add tags in migrations
+# open terminal
+# docker-compose run --rm app sh -c "python manage.py makemigrations"
+# response back:
+# Migrations for 'core':
+#   core/migrations/0003_auto_20230208_2035.py
+#     - Create model Tag
+#     - Add field tags to recipe
+
+# See core/migrations/0003_auto.../
+# migrations.AddField(
+#             model_name='recipe',
+#             name='tags', # added field tags to recipe
+#             field=models.ManyToManyField(to='core.Tag'),
+#         ),
+
+# Create Tag API, Step 4: Register models.Tag to core/admin.py
+
+# Create Tag API, Step 5: Implement API for listing tags. But before that create tests then create implmentations
+# Add tests in core/test_tags_api.py

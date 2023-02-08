@@ -46,3 +46,5 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Recipe)
+# Create Tag API, Step 4: Register models.Tag to core/admin.py
+admin.site.register(models.Tag)
