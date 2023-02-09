@@ -320,3 +320,59 @@ class PrivateRecipeApiTests(TestCase):
 #   File "/app/recipe/tests/test_recipe_api.py", line 278, in test_create_recipe_with_new_tags
 #     self.assertEqual(recipe.tags.count(), 2)
 # AssertionError: 0 != 2
+
+    # Create Tag API, Step 14: Write tests for updating recipe tags
+    def test_create_tag_on_update(self):
+        """Test create tag when updating a recipe."""
+        recipe = create_recipe(user=self.user)
+
+        payload = {'tags': [{'name': 'Lunch'}]}
+        url = detail_url(recipe.id)
+        res = self.client.patch(url, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        new_tag = Tag.objects.get(user=self.user, name='Lunch')
+        self.assertIn(new_tag, recipe.tags.all())
+
+    def test_update_recipe_assign_tag(self):
+        """Test assigning an existing tag when updating a recipe."""
+        # test for update
+        # create a tag for breakfast
+        tag_breakfast = Tag.objects.create(user=self.user, name='Breakfast')
+        recipe = create_recipe(user=self.user)
+        # add this tag to recipe.tags
+        recipe.tags.add(tag_breakfast)
+
+        # Create another tag, e.g. for lunch
+        tag_lunch = Tag.objects.create(user=self.user, name='Lunch')
+        # Create payload that is used to call patch request and update recipe.tags
+        payload = {'tags': [{'name': 'Lunch'}]} # nested
+        url = detail_url(recipe.id)
+        res = self.client.patch(url, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # check after calling patch request, whether recipe.tags was updated with tag_lunch
+        self.assertIn(tag_lunch, recipe.tags.all())
+        # validate that tag_breakfast was wiped out
+        self.assertNotIn(tag_breakfast, recipe.tags.all())
+
+    def test_clear_recipe_tags(self):
+        """Test clearing a recipes tags."""
+        tag = Tag.objects.create(user=self.user, name='Dessert')
+        recipe = create_recipe(user=self.user)
+        recipe.tags.add(tag)
+
+        payload = {'tags': []}
+        url = detail_url(recipe.id)
+        # update with an empty tags, {'tags': []}
+        res = self.client.patch(url, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # make sure after calling patch request, .count() returns 0
+        self.assertEqual(recipe.tags.count(), 0)
+        # RUN test, three failures
+#         AssertionError: The `.update()` method does not support writable nested fields by default.
+# Write an explicit `.update()` method for serializer `recipe.serializers.RecipeDetailSerializer`, or set `read_only=True` on nested serializer fields.
+
+# Next, change create() method in recipe/serializers.py to support update feature
+

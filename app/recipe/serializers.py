@@ -33,13 +33,18 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags']
         read_only_fields = ['id']
 
-    # override create()
-    # create receipe with custom setting
-    def create(self, validated_data):
-        """Create a recipe."""
-        # get and remove it from data base => use .pop()
-        tags = validated_data.pop('tags', [])
-        recipe = Recipe.objects.create(**validated_data)
+    # Create Recipe API Step 14: Change create() method in recipe/serializers.py to support update feature
+    # after this step, run "docker compose up" to run server,
+    # you should see "Running migrations:..."
+    # Open browser "http://127.0.0.1:8000/api/docs/#/"
+    # first authenticate a user, user => /api/user/create/  => a post request
+    # get token from user => post => api/user/token/
+    # login using authorize user tag at the top
+    # post /api/recipe/recipes/
+
+    # or go to 127.0.0.1:8000/admin
+    def _get_or_create_tags(self, tags, recipe):
+        """Handle getting or creating tags as needed."""
         auth_user = self.context['request'].user
         for tag in tags:
             tag_obj, created = Tag.objects.get_or_create(
@@ -48,8 +53,47 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
             recipe.tags.add(tag_obj)
 
+    def create(self, validated_data):
+        """Create a recipe."""
+        tags = validated_data.pop('tags', [])
+        recipe = Recipe.objects.create(**validated_data)
+        self._get_or_create_tags(tags, recipe)
+
         return recipe
-    # For Step 13, Run test and pass
+
+    def update(self, instance, validated_data):
+        """Update recipe."""
+        # instance is the existing instance
+        tags = validated_data.pop('tags', None) # if not available returns None
+        if tags is not None:
+            # empty list is not None, so clear it first
+            instance.tags.clear()
+            self._get_or_create_tags(tags, instance)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
+    # commented out for Step 14, change create() method to include update feature
+    # # override create()
+    # # create receipe with custom setting
+    # def create(self, validated_data):
+    #     """Create a recipe."""
+    #     # get and remove it from data base => use .pop()
+    #     tags = validated_data.pop('tags', [])
+    #     recipe = Recipe.objects.create(**validated_data)
+    #     auth_user = self.context['request'].user
+    #     for tag in tags:
+    #         tag_obj, created = Tag.objects.get_or_create(
+    #             user=auth_user,
+    #             **tag,
+    #         )
+    #         recipe.tags.add(tag_obj)
+
+    #     return recipe
+    # # For Step 13, Run test and pass
 
 class RecipeDetailSerializer(RecipeSerializer):
     """Serializer for recipe detail view."""
