@@ -80,3 +80,20 @@ class ModelTests(TestCase):
         tag = models.Tag.objects.create(user=user, name='Tag1')
         self.assertEqual(str(tag), tag.name)
         # then since it's TDD unit test, go ahead to add tag in core.model
+
+# Create Ingredients API, Step 1
+    def test_create_ingredient(self):
+        """Test creating an ingredient is successful."""
+        # create a test user
+        user = create_user()
+        # add an ingredients (create ingredients model later)
+        # run the test
+        # Fail
+        # AttributeError: module 'core.models' has no attribute 'Ingredient'
+        # Go to core/models.py to add ingredients
+        ingredient = models.Ingredient.objects.create(
+            user=user,
+            name='Ingredient1'
+        )
+
+        self.assertEqual(str(ingredient), ingredient.name)

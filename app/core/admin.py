@@ -48,3 +48,5 @@ admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Recipe)
 # Create Tag API, Step 4: Register models.Tag to core/admin.py
 admin.site.register(models.Tag)
+# Create Ingredients API, Step 2, then run the test and pass it
+admin.site.register(models.Ingredient)

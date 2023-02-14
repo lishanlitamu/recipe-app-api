@@ -58,6 +58,9 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     # add tags
     tags = models.ManyToManyField('Tag')
+    # Create Ingredients API, Step 2, add ingredient object to core/models.py
+    # add Ingredients
+    ingredients = models.ManyToManyField('Ingredient')
 
     def __str__(self):
         return self.title
@@ -95,3 +98,27 @@ class Tag(models.Model):
 
 # Create Tag API, Step 5: Implement API for listing tags. But before that create tests then create implmentations
 # Add tests in core/test_tags_api.py
+
+
+# Create Ingredients API, Step 2
+class Ingredient(models.Model):
+    """Ingredient for recipes."""
+    #
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
+
+# then create the migrate files for this new model
+# open terminal
+# docker-compose run --rm app sh -c "python manage.py makemigrations"
+# response in terminal
+# Migrations for 'core':
+#   core/migrations/0004_auto_20230214_0334.py
+#     - Create model Ingredient
+#     - Add field ingredients to recipe
+# Then go to core/admin.py to add admin.site.register(models.Ingredient)
